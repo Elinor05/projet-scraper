@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# URL de l'API pour récupérer les données du marché ETH/USDT
-url="https://api.huobi.pro/market/detail/merged?symbol=ethusdt"
+# Définition des variables
+URL="https://www.htx.com/fr-fr/price/eth/"
+OUTPUT_FILE="eth_prices.csv"
 
-# Utiliser curl pour envoyer la requête GET et récupérer la réponse
-response=$(curl -s "$url")
+# Récupération du contenu de la page
+HTML=$(curl -s "$URL")
 
-# Vérifier si la réponse contient des données et afficher le prix de l'ETH
-price=$(echo "$response" | jq -r '.tick.close')
+# Extraction du prix avec une regex (à ajuster selon le HTML du site)
+PRIX=$(echo "$HTML" | grep -oP '(?<=<div class="price">)[0-9]+\.[0-9]+')
 
-# Afficher le prix de l'ETH
-if [ "$price" != "null" ]; then
-    echo "Prix de l'ETH (USDT) : $price"
+# Vérification si on a récupéré une valeur correcte
+if [[ -n "$PRIX" ]]; then
+    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "$TIMESTAMP,$PRIX" >> "$OUTPUT_FILE"
+    echo "[$TIMESTAMP] Prix ETH : $PRIX USD ajouté à $OUTPUT_FILE"
 else
-    echo "Erreur lors de la récupération des données."
+    echo "Erreur : Impossible d'extraire le prix de l'ETH."
 fi
+
