@@ -1,14 +1,19 @@
 #!/bin/bash
 
 # Définition des variables
-URL="https://www.htx.com/fr-fr/price/eth/"
+URL="https://api.huobi.pro/market/detail/merged?symbol=ethusdt"
 OUTPUT_FILE="eth_prices.csv"
 
-# Récupération du contenu de la page
-HTML=$(curl -s "$URL")
+# Vérifier si le fichier CSV existe, sinon ajouter l'en-tête
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+    echo "timestamp,price" > "$OUTPUT_FILE"
+fi
 
-# Extraction du prix avec une regex (à ajuster selon le HTML du site)
-PRIX=$(echo "$HTML" | grep -oP '(?<=<div class="price">)[0-9]+\.[0-9]+')
+# Récupération des données JSON
+JSON=$(curl -s "$URL")
+
+# Extraction du prix avec grep et regex
+PRIX=$(echo "$JSON" | grep -oP '"close":\K[\d.]+')
 
 # Vérification si on a récupéré une valeur correcte
 if [[ -n "$PRIX" ]]; then
@@ -18,4 +23,3 @@ if [[ -n "$PRIX" ]]; then
 else
     echo "Erreur : Impossible d'extraire le prix de l'ETH."
 fi
-
