@@ -2,7 +2,7 @@
 
 # Définition des variables
 URL="https://api.huobi.pro/market/detail/merged?symbol=ethusdt"
-OUTPUT_FILE="eth_prices.csv"
+OUTPUT_FILE="/home/ubuntu/projet-scraper/eth_prices.csv"  # Changement du chemin
 
 # Vérifier si le fichier CSV existe, sinon ajouter l'en-tête
 if [[ ! -f "$OUTPUT_FILE" ]]; then
